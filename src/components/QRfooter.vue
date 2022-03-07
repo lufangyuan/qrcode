@@ -1,6 +1,5 @@
 <template>
-  <div class="footer">
-    {{footer}}
+  <div class="footer" v-html="footer">
   </div>
 </template>
 
@@ -10,25 +9,39 @@
     props: {
       footer: {
         type: String,
-        default: '© Copyright 技术支持:卢方远'
+        default: '© Copyright 技术支持：卢方远'
       }
     }
   }
 </script>
 
-<style scoped>
+<style>
   .footer {
     width: 100%;
     text-align: center;
-    /* position:fixed; */
-    /* left:0;
+    position:fixed;
+    left:0;
     right: 0;
-    bottom: 30px;
-    font-size: 35px;
-    font-weight: 500;
-    color: rgba(0, 0, 0, 0.8); */
+    bottom: 0;
+    font-size: 10px;
+    font-weight: 350;
+    color: #909090;
+
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
   }
-  @media (max-width: 768px) {
- 
+  .footer p a {
+    color:#909090;
+    cursor: pointer;
+    text-decoration:none;
+  }
+  .footer p a:hover {
+    color:#7592FF;
+    transition: 0.5s all;
+    -webkit-transition: 0.5s all;
+    -moz-transition: 0.5s all;
+    -o-transition: 0.5s all;
   }
 </style>

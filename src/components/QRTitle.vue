@@ -25,6 +25,11 @@ export default {
     font-size: 35px;
     font-weight: 500;
     color: rgba(0, 0, 0, 0.8);
+
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
   }
   @media (max-width: 768px) {
     .title {
