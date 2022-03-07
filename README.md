@@ -1,4 +1,4 @@
-# qrcode
+# QRcode
 
 ## Project setup
 ```
@@ -15,10 +15,7 @@ npm run serve
 npm run build
 ```
 
-### 可能需要PHP运行环境
+## 项目介绍
 ```
-可能需要PHP运行环境
+生成二维码
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
