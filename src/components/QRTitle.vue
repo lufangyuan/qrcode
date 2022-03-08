@@ -31,7 +31,7 @@ export default {
     -ms-user-select:none;
     user-select:none;
   }
-  @media (max-width: 768px) {
+  @media (max-width: 850px) {
     .title {
       margin-top: 50px;
     }

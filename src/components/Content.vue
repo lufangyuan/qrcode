@@ -1,41 +1,128 @@
 <template>
   <div class="box">
-    <div class="set">
-      <textarea type="text" id="content" placeholder="输入您的内容" maxlength="400"></textarea>
+    <div class="set" v-if="!isPhone">
+      <textarea type="text" placeholder="输入您的内容" maxlength="400" ref="content" v-model.trim="text"></textarea>
       <div class="setlogo">
         <div class="tit">设置LOGO：</div>
-        <input style="display: none;" type="file" id="file" name="file" accept="image/jpeg,image/png" onchange="upload_logo()" />
-        <div class="logo" id="logo"><p id="lg_ts">点击上传</p></div>
+        <input style="display: none;" type="file" ref="logo" name="file" accept="image/jpeg,image/png" @change="upload"/>
+        <div class="logo" @click="btnLogo()" ref="uploadDiv" v-html="uploadDivHtml"></div>
       </div>
       <div class="btnbox"><button type="button" @click="creatQR">生成二维码</button></div>
     </div>
-    <div class="qrcode" id="qrcode">
-      <img :src="firstImg" style="width:100%;height:100%;object-fit:cover;" />
+    <div v-else class="phone">
+      <img :src="imgSrc" style="width:100%;object-fit:cover;" />
+      <el-button round @click="isPhone=!isPhone">返回</el-button>
+    </div>
+    <div class="qrcode">
+      <img :src="imgSrc" style="width:100%;height:100%;object-fit:cover;" />
     </div>
   </div>
-  <Prompt ref="prompt"/>
 </template>
 
 <script>
-  import Prompt from './Prompt.vue'
+  import {getImgUrl} from '../request/api.js'
 
   export default {
     name: "Content",
     data() {
       return {
-        firstImg:'http://www.keweikeji.com/qrcode/class/qr.php?content=http://www.keweikeji.com/qrcode/&logo=../images/ico/qr.png'
+        imgSrc:'http://www.keweikeji.com/qrcode/class/qr.php?content=http://www.keweikeji.com/qrcode/&logo=../images/ico/qr.png',
+        logourl: '',
+        uploadDivHtml: '<p>点击上传</p>',
+        isSizeOk: false,
+        text: '',
+        isPhone: false,
+        minSize: 835
       }
-    },
-    components: {
-      Prompt
     },
     methods: {
       creatQR() {
-        this.$prompt.data.isShow = true
+        if(!this.text){
+          this.$message({
+            title: '注意',
+            message: '请输入您要转码的内容',
+            type: 'warning',
+            center: true
+          })
+          this.$refs.content.focus()
+        }else{
+          this.imgSrc = 'http://www.keweikeji.com/qrcode/class/qr.php?content=' + encodeURIComponent(this.text) + '&logo=' + this.logourl
+          if(document.body.clientWidth <= this.minSize){
+            this.isPhone = true
+          }else{
+            this.isPhone = false
+          }
+        }
+      },
+      btnLogo() {
+        this.$refs.logo.dispatchEvent(new MouseEvent('click'))
+      },
+      upload(el) {
+        const file = el.target.files[0]
+        //验证用户点了取消
+        if(file==undefined){
+          this.logourl = ''
+          this.uploadDivHtml = '<p>点击上传</p>'
+          return false
+        }
+        //验证图片大小
+        if(file.size > 1024*1024){
+          this.$message({
+            title: '注意',
+            message: '请上传小于1M的图片',
+            type: 'error',
+            center: true
+          })
+          return false
+        }
+        //验证图片尺寸
+        const that = this
+        var reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onload = function(theFile) {
+          var image = new Image()
+          image.src = theFile.target.result
+          image.onload = function() {
+            if(this.width==this.height){
+              that.isSizeOk = true
+            }else{
+              that.isSizeOk = false
+            }
+          }
+        }
+        //延时后判断尺寸
+        setTimeout(() => {
+          if(!this.isSizeOk){
+            this.$message({
+              title: '注意',
+              message: '请上传尺寸为1:1的图片',
+              type: 'error',
+              center: true
+            })
+            return false
+          }
+          //开始上传图片文件
+          const formData = new FormData()
+          formData.append('file',file)
+          getImgUrl(formData)
+            .then(res => {
+              console.log(res)
+            })
+            .catch(res => {
+              console.log(res)
+            })
+        },500)
       }
     },
     mounted() {
-      document.getElementById('content').focus()
+      this.$refs.content.focus()
+      window.onresize = () => {
+        if(document.body.clientWidth <= this.minSize){
+          this.isPhone = true
+        }else{
+          this.isPhone = false
+        }
+      }
     }
   }
 </script>
@@ -50,7 +137,7 @@
       padding: 50px;
       border-radius:20px;
       box-shadow: 5px 5px 50px #bbb;
-    }
+  }
   .set{
     width: 400px;
   }
@@ -87,6 +174,10 @@
   .tit{
     color: #aaa;
     margin-top: 30px;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
   }
   .setlogo{
     display: flex;
@@ -100,6 +191,10 @@
     box-shadow: 1px 1px 5px #bbb;
     cursor:pointer;
     border-radius:5px;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
   }
   .logo p{
     margin-top: 32px;
@@ -118,6 +213,13 @@
     color: #ccc;
     font-size: 18px;
   }
+  .phone {
+    text-align: center;
+  }
+  .phone img {
+    border-radius:20px;
+    margin-bottom: 20px;
+  }
   textarea::-webkit-input-placeholder {
     /* WebKit browsers */
     color: #ddd;
@@ -133,5 +235,10 @@
   textarea::-ms-input-placeholder {
     /* Internet Explorer 10+ */
     color: #ddd;
+  }
+  @media (max-width: 850px) {
+    .qrcode {
+      display: none;
+    }
   }
 </style>
