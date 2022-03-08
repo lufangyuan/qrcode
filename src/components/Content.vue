@@ -51,6 +51,12 @@
             this.isPhone = true
           }else{
             this.isPhone = false
+            this.$notify({
+              title: '完成',
+              message: '您的二维码已生成',
+              type: 'success',
+              center: true
+            })
           }
         }
       },
