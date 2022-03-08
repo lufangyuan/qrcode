@@ -11,7 +11,7 @@
     </div>
     <div v-else class="phone">
       <img :src="imgSrc" style="width:100%;object-fit:cover;" />
-      <el-button round @click="isPhone=!isPhone">返回</el-button>
+      <button round @click="isPhone=!isPhone" class="btnBack">返回</button>
     </div>
     <div class="qrcode">
       <img :src="imgSrc" style="width:100%;height:100%;object-fit:cover;" />
@@ -26,7 +26,7 @@
     name: "Content",
     data() {
       return {
-        imgSrc:'http://www.keweikeji.com/qrcode/class/qr.php?content=http://www.keweikeji.com/qrcode/&logo=../images/ico/qr.png',
+        imgSrc:'../qrcode/class/qr.php?content=http://www.keweikeji.com/qrcode/&logo=../images/qr.png',
         logourl: '',
         uploadDivHtml: '<p>点击上传</p>',
         isSizeOk: false,
@@ -46,7 +46,7 @@
           })
           this.$refs.content.focus()
         }else{
-          this.imgSrc = 'http://www.keweikeji.com/qrcode/class/qr.php?content=' + encodeURIComponent(this.text) + '&logo=' + this.logourl
+          this.imgSrc = '../qrcode/class/qr.php?content=' + encodeURIComponent(this.text) + '&logo=..' + this.logourl.substr(7,30)
           if(document.body.clientWidth <= this.minSize){
             this.isPhone = true
           }else{
@@ -106,10 +106,18 @@
           formData.append('file',file)
           getImgUrl(formData)
             .then(res => {
-              console.log(res)
-            })
-            .catch(res => {
-              console.log(res)
+              if(res.data!=false){
+                //图片上传成功
+                this.uploadDivHtml = '<img src="' + res.data + '" style="width:100%;height:100%;object-fit:cover;" />'
+                this.logourl = res.data
+              }else{
+                this.$notify({
+                  title: '注意',
+                  message: '图片上传失败',
+                  type: 'error',
+                  center: true
+                })
+              }
             })
         },500)
       }
@@ -219,6 +227,21 @@
   .phone img {
     border-radius:20px;
     margin-bottom: 20px;
+  }
+  .btnBack{
+    width: 80%;
+    background-color: rgb(92,184,92);
+    /* margin-top: 20px; */
+    outline: none;
+    border: none;
+    border-radius:5px;
+    color: #fff;
+    padding: 10px;
+    margin: 20px auto;
+  }
+  .btnBack:hover {
+    background-color: rgb(68,157,68);
+    cursor:pointer;
   }
   textarea::-webkit-input-placeholder {
     /* WebKit browsers */
