@@ -235,7 +235,7 @@
     margin-bottom: 20px;
   }
   .btnBack{
-    width: 80%;
+    width: 100%;
     background-color: rgb(92,184,92);
     /* margin-top: 20px; */
     outline: none;
