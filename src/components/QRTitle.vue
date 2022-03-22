@@ -33,7 +33,7 @@ export default {
   }
   @media (max-width: 850px) {
     .title {
-      margin-top: 50px;
+      display: none;
     }
   }
 </style>
