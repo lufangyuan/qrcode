@@ -21,6 +21,8 @@
 
 <script>
   import {getImgUrl} from '../request/api.js'
+  import { ElMessage } from 'element-plus'
+  import { ElNotification } from 'element-plus'
 
   export default {
     name: "Content",
@@ -38,7 +40,7 @@
     methods: {
       creatQR() {
         if(!this.text){
-          this.$message({
+          ElMessage({
             title: '注意',
             message: '请输入您要转码的内容',
             type: 'warning',
@@ -51,7 +53,7 @@
             this.isPhone = true
           }else{
             this.isPhone = false
-            this.$notify({
+            ElNotification({
               title: '完成',
               message: '您的二维码已生成',
               type: 'success',
@@ -73,7 +75,7 @@
         }
         //验证图片大小
         if(file.size > 1024*1024){
-          this.$message({
+          ElMessage({
             title: '注意',
             message: '请上传小于1M的图片',
             type: 'error',
@@ -99,7 +101,7 @@
         //延时后判断尺寸
         setTimeout(() => {
           if(!this.isSizeOk){
-            this.$message({
+            ElMessage({
               title: '注意',
               message: '请上传尺寸为1:1的图片',
               type: 'error',
@@ -117,7 +119,7 @@
                 this.uploadDivHtml = '<img src="' + res.data + '" style="width:100%;height:100%;object-fit:cover;" />'
                 this.logourl = res.data
               }else{
-                this.$notify({
+                ElNotification({
                   title: '注意',
                   message: '图片上传失败',
                   type: 'error',
@@ -265,6 +267,7 @@
     /* Internet Explorer 10+ */
     color: #ddd;
   }
+
   @media (max-width: 850px) {
     .qrcode {
       display: none;
